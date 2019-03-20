@@ -1,0 +1,16 @@
+[package]
+name = "rust-keycloak"
+version = "0.0.2"
+description = "rust-keycloak is a Rust crate providing access to the Keycloak API."
+repository = "https://github.com/tritone11/rust-keycloak"
+keywords = ["keycloak", "rust"]
+license = "GPL-2.0-or-later"
+authors = ["tritone11"]
+readme = "README.md"
+
+[dependencies]
+serde_json = "1.0.34"
+reqwest = "0.9.6"
+serde_derive = "1.0"
+serde = "1.0"
+jsonwebtoken = "5"

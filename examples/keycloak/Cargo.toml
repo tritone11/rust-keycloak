@@ -1,0 +1,8 @@
+[package]
+name = "keycloak"
+version = "0.1.0"
+authors = ["tritone11"]
+edition = "2018"
+
+[dependencies]
+rust-keycloak = "0.0.1"
