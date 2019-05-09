@@ -32,7 +32,7 @@ impl OpenId {
             return k_res
         }
 
-        pub fn token (base_url: &str, data: serde_json::Value , realm: &str) -> String {
+        pub fn token (base_url: &str, data: serde_json::Value , realm: &str) -> Result<String,String> {
             let url = urls::OPENID_URLS.url_token.replace("{realm-name}",realm);
 
             let payload = json!({
@@ -45,9 +45,13 @@ impl OpenId {
             });
 
             let path = base_url.to_owned()+&url.to_owned();
-            let res: openid::Token = openid::get_token(&path,payload);
-            let token = res.access_token;
-            return token
+            if let Ok(res) = openid::get_token(&path,payload) {
+                let token = res.access_token;
+                return Ok(token)
+            }else{
+                return Err("".to_string())
+            };
+            
         }
 
         pub fn introspect (base_url: &str, realm: &str, data: serde_json::Value ) -> String {
@@ -70,7 +74,7 @@ impl OpenId {
             return tok
         }
 
-        pub fn refresh_token (base_url: &str, data: serde_json::Value , realm: &str) -> String {
+        pub fn refresh_token (base_url: &str, data: serde_json::Value , realm: &str) -> Result<String,String> {
             let url = urls::OPENID_URLS.url_token.replace("{realm-name}",realm);
 
             let payload = json!({
@@ -80,10 +84,17 @@ impl OpenId {
             });
             
             let path = base_url.to_owned()+&url.to_owned();
-            let res: openid::Token = openid::get_token(&path,payload);
-            let d = json!(res);
-            let token = d["access_token"].to_string();
-            return token
+
+            if let Ok(res) = openid::get_token(&path,payload) {
+                let d = json!(res);
+                let token = d["access_token"].to_string();
+                return Ok(token)
+            }else{
+                return Err("".to_string())
+            };
+
+            
+            
         }
 }
 

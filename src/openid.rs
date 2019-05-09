@@ -11,14 +11,22 @@ pub struct Token {
 }
 
 
-pub fn get_token (path: &str, payload: serde_json::Value ) -> Token {
+pub fn get_token (path: &str, payload: serde_json::Value ) -> Result<Token,String> {
     
     let client = reqwest::Client::new();
-    let k_res: Token = client.post(path)
+    if let Ok(mut k_res) = client.post(path)
                     .header(CONTENT_TYPE,HeaderValue::from_static("application/json"))
                     .form(&payload)
-                    .send().unwrap().json().unwrap();
-    return k_res
+                    .send() {
+                        if let Ok(kk) = k_res.json() {
+                            let k: Token = kk;
+                            return Ok(k)
+                        }else{
+                            return Err("".to_string())
+                        }
+                    }else{
+                        return Err("".to_string())
+                    };
 }
 
 pub fn introspect_token (path: &str, payload: serde_json::Value ) -> String {
