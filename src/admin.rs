@@ -1,49 +1,52 @@
-#![deny(warnings)]
-
 use reqwest::header::{HeaderValue, CONTENT_TYPE};
 
-
-
-pub fn payload_bearer_request(path: &str, payload: serde_json::Value ,token: &str) -> reqwest::Response {
-    
+pub async fn payload_bearer_request(
+    path: &str,
+    payload: serde_json::Value,
+    token: &str,
+) -> Result<reqwest::Response, reqwest::Error> {
     let client = reqwest::Client::new();
-    let k_res = client.post(path)
-                    .bearer_auth(token.to_string())
-                    .header(CONTENT_TYPE,HeaderValue::from_static("application/json"))
-                    .json(&payload)
-                    .send().unwrap();
-
-    return k_res
+    client
+        .post(path)
+        .bearer_auth(token.to_string())
+        .header(CONTENT_TYPE, HeaderValue::from_static("application/json"))
+        .json(&payload)
+        .send()
+        .await
 }
 
-pub fn payload_bearer_request_status(path: &str, payload: serde_json::Value ,token: &str) -> reqwest::StatusCode {
-    
+pub async fn payload_bearer_request_status(
+    path: &str,
+    payload: serde_json::Value,
+    token: &str,
+) -> Result<reqwest::StatusCode, reqwest::Error> {
     let client = reqwest::Client::new();
-    let k_res = client.post(path)
-                    .bearer_auth(token.to_string())
-                    .header(CONTENT_TYPE,HeaderValue::from_static("application/json"))
-                    .json(&payload)
-                    .send().unwrap().status();
-
-    return k_res
+    client
+        .post(path)
+        .bearer_auth(token.to_string())
+        .header(CONTENT_TYPE, HeaderValue::from_static("application/json"))
+        .json(&payload)
+        .send()
+        .await
+        .map(|response| response.status())
 }
 
-pub fn bearer_post_request(path: &str ,token: &str) -> reqwest::Response {
-    
+pub async fn bearer_post_request(
+    path: &str,
+    token: &str,
+) -> Result<reqwest::Response, reqwest::Error> {
     let client = reqwest::Client::new();
-    let k_res = client.post(path)
-                    .bearer_auth(token.to_string())
-                    .send().unwrap();
-
-    return k_res
+    client
+        .post(path)
+        .bearer_auth(token.to_string())
+        .send()
+        .await
 }
 
-pub fn bearer_get_request(path: &str ,token: &str) -> reqwest::Response {
-    
+pub async fn bearer_get_request(
+    path: &str,
+    token: &str,
+) -> Result<reqwest::Response, reqwest::Error> {
     let client = reqwest::Client::new();
-    let k_res = client.get(path)
-                    .bearer_auth(token.to_string())
-                    .send().unwrap();
-
-    return k_res
+    client.get(path).bearer_auth(token.to_string()).send().await
 }
