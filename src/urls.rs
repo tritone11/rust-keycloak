@@ -1,10 +1,9 @@
-
 #[derive(Debug)]
-pub struct Urls{
-    pub url_well_known : &'static str,
-    pub url_token : &'static str,
-    pub url_userinfo : &'static str,
-    pub url_introspect : &'static str,
+pub struct Urls {
+    pub url_well_known: &'static str,
+    pub url_token: &'static str,
+    pub url_userinfo: &'static str,
+    pub url_introspect: &'static str,
     /*url_logout : &'static str,
     url_certs : &'static str,
     url_introspect : &'static str,
@@ -12,9 +11,10 @@ pub struct Urls{
     url_auth : &'static str,*/
 }
 
+#[derive(Debug)]
 pub struct AdminUrls {
-    pub url_admin_users : &'static str,
-    pub url_admin_users_count : &'static str,
+    pub url_admin_users: &'static str,
+    pub url_admin_users_count: &'static str,
     /*url_admin_user : &'static str,
     url_admin_user_consents : &'static str,
     url_admin_send_update_account : &'static str,
@@ -51,24 +51,23 @@ pub struct AdminUrls {
 
     url_admin_flows : &'static str,
     url_admin_flows_executions : &'static str,*/
-
 }
 
 pub const OPENID_URLS: Urls = Urls {
-    url_well_known : "realms/{realm-name}/.well-known/openid-configuration",
-    url_token : "realms/{realm-name}/protocol/openid-connect/token",
-    url_userinfo : "realms/{realm-name}/protocol/openid-connect/userinfo",
-    url_introspect : "realms/{realm-name}/protocol/openid-connect/token/introspect",
+    url_well_known: "realms/{realm-name}/.well-known/openid-configuration",
+    url_token: "realms/{realm-name}/protocol/openid-connect/token",
+    url_userinfo: "realms/{realm-name}/protocol/openid-connect/userinfo",
+    url_introspect: "realms/{realm-name}/protocol/openid-connect/token/introspect",
     /*url_logout : "realms/{realm-name}/protocol/openid-connect/logout",
     url_certs : "realms/{realm-name}/protocol/openid-connect/certs",
-    
+
     url_entitlement : "realms/{realm-name}/authz/entitlement/{resource-server-id}",
     url_auth : "{authorization-endpoint}?client_id={client-id}&response_type=code&redirect_uri={redirect-uri}",*/
 };
 
 pub const ADMIN_URLS: AdminUrls = AdminUrls {
-    url_admin_users : "admin/realms/{realm-name}/users",
-    url_admin_users_count : "admin/realms/{realm-name}/users/count",
+    url_admin_users: "admin/realms/{realm-name}/users",
+    url_admin_users_count: "admin/realms/{realm-name}/users/count",
     /*url_admin_user : "admin/realms/{realm-name}/users/{id}",
     url_admin_user_consents : "admin/realms/{realm-name}/users/{id}/consents",
     url_admin_send_update_account : "admin/realms/{realm-name}/users/{id}/execute-actions-email",

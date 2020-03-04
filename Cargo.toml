@@ -5,12 +5,14 @@ description = "rust-keycloak is a Rust crate providing access to the Keycloak AP
 repository = "https://github.com/tritone11/rust-keycloak"
 keywords = ["keycloak", "rust"]
 license = "GPL-2.0-or-later"
-authors = ["tritone11"]
+authors = ["tritone11", "anlumo"]
 readme = "README.md"
+edition = "2018"
+
 
 [dependencies]
-serde_json = "1.0.34"
-reqwest = "0.9.6"
+serde_json = "1.0"
+reqwest = { version = "0.10", features = ["json"] }
 serde_derive = "1.0"
 serde = "1.0"
 jsonwebtoken = { git = "https://github.com/tritone11/jsonwebtoken" }
