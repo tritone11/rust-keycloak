@@ -15,4 +15,4 @@ serde_json = "1.0"
 reqwest = { version = "0.10", features = ["json"] }
 serde_derive = "1.0"
 serde = "1.0"
-jsonwebtoken = { git = "https://github.com/tritone11/jsonwebtoken" }
+jsonwebtoken = "7.1"
