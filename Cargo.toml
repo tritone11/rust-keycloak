@@ -1,6 +1,6 @@
 [package]
 name = "rust-keycloak"
-version = "0.0.4"
+version = "0.0.5"
 description = "rust-keycloak is a Rust crate providing access to the Keycloak API."
 repository = "https://github.com/tritone11/rust-keycloak"
 keywords = ["keycloak", "rust"]
