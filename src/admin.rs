@@ -12,7 +12,7 @@ pub async fn payload_bearer_request(
         .header(CONTENT_TYPE, HeaderValue::from_static("application/json"))
         .json(&payload)
         .send()
-        .await
+        .await?.error_for_status()
 }
 
 pub async fn payload_bearer_request_status(
@@ -40,7 +40,7 @@ pub async fn bearer_post_request(
         .post(path)
         .bearer_auth(token.to_string())
         .send()
-        .await
+        .await?.error_for_status()
 }
 
 pub async fn bearer_get_request(
@@ -48,5 +48,5 @@ pub async fn bearer_get_request(
     token: &str,
 ) -> Result<reqwest::Response, reqwest::Error> {
     let client = reqwest::Client::new();
-    client.get(path).bearer_auth(token.to_string()).send().await
+    client.get(path).bearer_auth(token.to_string()).send().await?.error_for_status()
 }

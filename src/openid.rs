@@ -15,7 +15,7 @@ pub async fn get_token(path: &str, payload: serde_json::Value) -> Result<Token, 
         .header(CONTENT_TYPE, HeaderValue::from_static("application/json"))
         .form(&payload)
         .send()
-        .await?;
+        .await?.error_for_status()?;
     k_res.json().await
 }
 
@@ -29,6 +29,6 @@ pub async fn introspect_token(
         .header(CONTENT_TYPE, HeaderValue::from_static("application/json"))
         .form(&payload)
         .send()
-        .await?;
+        .await?.error_for_status()?;
     k_res.text().await
 }

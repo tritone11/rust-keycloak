@@ -141,7 +141,7 @@ impl Admin {
         let client = reqwest::Client::new();
 
         let path = base_url.to_owned() + &url.to_owned();
-        let k_res = client.post(&path).bearer_auth(bearer).send().await?;
+        let k_res = client.post(&path).bearer_auth(bearer).send().await?.error_for_status()?;
         Ok(json!(k_res.json().await?))
     }
 }
