@@ -164,4 +164,58 @@ impl Admin {
         let k_res = client.post(&path).bearer_auth(bearer).send().await?.error_for_status()?;
         Ok(json!(k_res.json().await?))
     }
+
+    pub async fn add_user_group<'a>(
+        base_url: &'a str,
+        realm: &'a str,
+        user_id: &'a str,
+        group_id: &'a str,
+        bearer: &'a str,
+    ) -> Result<(), reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_user_group
+            .replace("{realm-name}", realm)
+            .replace("{id}", user_id)
+            .replace("{group-id}", group_id);
+        
+        let client = reqwest::Client::new();
+
+        let path = base_url.to_owned() + &url.to_owned();
+        let k_res = client.put(&path).bearer_auth(bearer)
+            .json(&json!({
+                "realm": realm.to_owned(),
+                "userId": user_id.to_owned(),
+                "groupId": group_id.to_owned(),
+            }))
+            .send().await?.error_for_status()?;
+        k_res.text().await?;
+        Ok(())
+    }
+
+    pub async fn remove_user_group<'a>(
+        base_url: &'a str,
+        realm: &'a str,
+        user_id: &'a str,
+        group_id: &'a str,
+        bearer: &'a str,
+    ) -> Result<(), reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_user_group
+            .replace("{realm-name}", realm)
+            .replace("{id}", user_id)
+            .replace("{group-id}", group_id);
+        
+        let client = reqwest::Client::new();
+
+        let path = base_url.to_owned() + &url.to_owned();
+        let k_res = client.delete(&path).bearer_auth(bearer)
+            .json(&json!({
+                "realm": realm.to_owned(),
+                "userId": user_id.to_owned(),
+                "groupId": group_id.to_owned(),
+            }))
+            .send().await?.error_for_status()?;
+        k_res.text().await?;
+        Ok(())
+    }
 }
