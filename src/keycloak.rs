@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::admin;
 use crate::openid;
 use crate::urls;
@@ -218,4 +219,84 @@ impl Admin {
         k_res.text().await?;
         Ok(())
     }
+
+    pub async fn user_representation(
+        base_url: &str,
+        realm: &str,
+        id: &str,
+        bearer: &str,
+    ) -> Result<Option<UserRepresentation>, reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_user
+            .replace("{realm-name}", realm)
+            .replace("{id}", id);
+        let client = reqwest::Client::new();
+
+        let path = base_url.to_owned() + &url.to_owned();
+        let k_res = client.get(&path).bearer_auth(bearer).send().await?.error_for_status()?;
+        Ok(serde_json::from_value(k_res.json().await?).ok())
+    }
+}
+
+#[derive(Deserialize, Debug, Clone)]
+#[serde(rename_all="camelCase")]
+pub struct UserConsentRepresentation {
+    client_id: Option<String>,
+    created_date: Option<i64>,
+    granted_client_scopes: Option<Vec<String>>,
+    last_update_date: Option<i64>,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+#[serde(rename_all="camelCase")]
+pub struct CredentialRepresentation {
+    algorithm: Option<String>,
+    config: serde_json::Value,
+    counter: Option<i32>,
+    created_date: Option<i64>,
+    device: Option<String>,
+    digits: Option<i32>,
+    hash_iterations: Option<i32>,
+    hashed_salted_value: Option<String>,
+    period: Option<i32>,
+    salt: Option<String>,
+    temporary: Option<bool>,
+    r#type: Option<String>,
+    value: Option<String>,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+#[serde(rename_all="camelCase")]
+pub struct FederatedIdentityRepresentation {
+    identity_provider: Option<String>,
+    user_id: Option<String>,
+    user_name: Option<String>,
+}
+
+#[derive(Deserialize, Debug, Default, Clone)]
+#[serde(rename_all="camelCase")]
+pub struct UserRepresentation {
+    access: Option<HashMap<String, bool>>,
+    attributes: Option<HashMap<String, Vec<String>>>,
+    client_consents: Option<Vec<UserConsentRepresentation>>,
+    created_timestamp: Option<i64>,
+    credentials: Option<Vec<CredentialRepresentation>>,
+    disableable_credential_types: Option<Vec<String>>,
+    email: Option<String>,
+    email_verified: Option<bool>,
+    enabled: Option<bool>,
+    federated_identities: Option<Vec<FederatedIdentityRepresentation>>,
+    federation_link: Option<String>,
+    first_name: Option<String>,
+    groups: Option<Vec<String>>,
+    id: Option<String>,
+    last_name: Option<String>,
+    not_before: Option<i32>,
+    origin: Option<String>,
+    realm_roles: Option<Vec<String>>,
+    required_actions: Option<Vec<String>>,
+    #[serde(rename="self")]
+    self_: Option<String>,
+    service_account_client_id: Option<String>,
+    username: Option<String>,
 }
