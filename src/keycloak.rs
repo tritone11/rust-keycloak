@@ -110,25 +110,23 @@ impl OpenId {
 impl Admin {
     pub async fn create_user(
         base_url: &str,
-        data: serde_json::Value,
+        data: &UserRepresentation,
         realm: &str,
         token: &str,
-    ) -> Result<reqwest::StatusCode, reqwest::Error> {
+    ) -> Result<Option<String>, reqwest::Error> {
         let url = urls::ADMIN_URLS
             .url_admin_users
             .replace("{realm-name}", realm);
-        let payload = json!({
-            "email": data["email"].to_string(),
-            "username": data["username"],
-            "enabled": data["enabled"],
-            "firstName": data["firstName"],
-            "lastName": data["lastName"],
-            "credentials": [{"value": data["password"],"type": "password"}],
-            "realmRoles": [data["realmRole"]]
-        });
+        let payload =  serde_json::to_value(data).unwrap();
 
         let path = base_url.to_owned() + &url.to_owned();
-        admin::payload_bearer_request_status(&path, payload, token).await
+        let response = admin::payload_bearer_request(&path, payload, token).await?;
+
+        if let Some(location) = response.headers().get("location").and_then(|location| location.to_str().ok()) {
+            Ok(location.rsplitn(2, '/').next().map(|id| id.to_owned()))
+        } else {
+            Ok(None)
+        }
     }
 
     pub async fn users_count(
@@ -238,65 +236,65 @@ impl Admin {
     }
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct UserConsentRepresentation {
-    client_id: Option<String>,
-    created_date: Option<i64>,
-    granted_client_scopes: Option<Vec<String>>,
-    last_update_date: Option<i64>,
+    pub client_id: Option<String>,
+    pub created_date: Option<i64>,
+    pub granted_client_scopes: Option<Vec<String>>,
+    pub last_update_date: Option<i64>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct CredentialRepresentation {
-    algorithm: Option<String>,
-    config: serde_json::Value,
-    counter: Option<i32>,
-    created_date: Option<i64>,
-    device: Option<String>,
-    digits: Option<i32>,
-    hash_iterations: Option<i32>,
-    hashed_salted_value: Option<String>,
-    period: Option<i32>,
-    salt: Option<String>,
-    temporary: Option<bool>,
-    r#type: Option<String>,
-    value: Option<String>,
+    pub algorithm: Option<String>,
+    pub config: serde_json::Value,
+    pub counter: Option<i32>,
+    pub created_date: Option<i64>,
+    pub device: Option<String>,
+    pub digits: Option<i32>,
+    pub hash_iterations: Option<i32>,
+    pub hashed_salted_value: Option<String>,
+    pub period: Option<i32>,
+    pub salt: Option<String>,
+    pub temporary: Option<bool>,
+    pub r#type: Option<String>,
+    pub value: Option<String>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct FederatedIdentityRepresentation {
-    identity_provider: Option<String>,
-    user_id: Option<String>,
-    user_name: Option<String>,
+    pub identity_provider: Option<String>,
+    pub user_id: Option<String>,
+    pub user_name: Option<String>,
 }
 
-#[derive(Deserialize, Debug, Default, Clone)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct UserRepresentation {
-    access: Option<HashMap<String, bool>>,
-    attributes: Option<HashMap<String, Vec<String>>>,
-    client_consents: Option<Vec<UserConsentRepresentation>>,
-    created_timestamp: Option<i64>,
-    credentials: Option<Vec<CredentialRepresentation>>,
-    disableable_credential_types: Option<Vec<String>>,
-    email: Option<String>,
-    email_verified: Option<bool>,
-    enabled: Option<bool>,
-    federated_identities: Option<Vec<FederatedIdentityRepresentation>>,
-    federation_link: Option<String>,
-    first_name: Option<String>,
-    groups: Option<Vec<String>>,
-    id: Option<String>,
-    last_name: Option<String>,
-    not_before: Option<i32>,
-    origin: Option<String>,
-    realm_roles: Option<Vec<String>>,
-    required_actions: Option<Vec<String>>,
+    pub access: Option<HashMap<String, bool>>,
+    pub attributes: Option<HashMap<String, Vec<String>>>,
+    pub client_consents: Option<Vec<UserConsentRepresentation>>,
+    pub created_timestamp: Option<i64>,
+    pub credentials: Option<Vec<CredentialRepresentation>>,
+    pub disableable_credential_types: Option<Vec<String>>,
+    pub email: Option<String>,
+    pub email_verified: Option<bool>,
+    pub enabled: Option<bool>,
+    pub federated_identities: Option<Vec<FederatedIdentityRepresentation>>,
+    pub federation_link: Option<String>,
+    pub first_name: Option<String>,
+    pub groups: Option<Vec<String>>,
+    pub id: Option<String>,
+    pub last_name: Option<String>,
+    pub not_before: Option<i32>,
+    pub origin: Option<String>,
+    pub realm_roles: Option<Vec<String>>,
+    pub required_actions: Option<Vec<String>>,
     #[serde(rename="self")]
-    self_: Option<String>,
-    service_account_client_id: Option<String>,
-    username: Option<String>,
+    pub self_: Option<String>,
+    pub service_account_client_id: Option<String>,
+    pub username: Option<String>,
 }
