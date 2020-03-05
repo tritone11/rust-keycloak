@@ -41,6 +41,26 @@ impl OpenId {
             .map(|res| res.access_token)
     }
 
+    pub async fn token_client(
+        base_url: &str,
+        realm: &str,
+        client_id: &str,
+        client_secret: &str,
+    ) -> Result<String, reqwest::Error> {
+        let url = urls::OPENID_URLS.url_token.replace("{realm-name}", realm);
+
+        let payload = json!({
+            "client_id": client_id.to_owned(),
+            "client_secret": client_secret.to_owned(),
+            "grant_type": "client_credentials".to_owned(),
+        });
+
+        let path = base_url.to_owned() + &url.to_owned();
+        openid::get_token(&path, payload)
+            .await
+            .map(|res| res.access_token)
+    }
+
     pub async fn introspect(
         base_url: &str,
         realm: &str,
