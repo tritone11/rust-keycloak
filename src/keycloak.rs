@@ -234,6 +234,52 @@ impl Admin {
         let k_res = client.get(&path).bearer_auth(bearer).send().await?.error_for_status()?;
         Ok(serde_json::from_value(k_res.json().await?).ok())
     }
+
+    pub async fn add_realm_roles_to_user(
+        base_url: &str,
+        realm: &str,
+        user_id: &str,
+        roles: &[RoleRepresentation],
+        bearer: &str,
+    ) -> Result<(), reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_user_realm_roles
+            .replace("{realm-name}", realm)
+            .replace("{id}", user_id);
+        
+        let client = reqwest::Client::new();
+
+        let path = base_url.to_owned() + &url.to_owned();
+        let k_res = client.post(&path).bearer_auth(bearer)
+            .json(roles)
+            .send().await?.error_for_status()?;
+        k_res.text().await?;
+        Ok(())
+    }
+
+    pub async fn add_client_roles_to_user(
+        base_url: &str,
+        realm: &str,
+        user_id: &str,
+        client_id: &str,
+        roles: &[RoleRepresentation],
+        bearer: &str,
+    ) -> Result<(), reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_user_client_roles
+            .replace("{realm-name}", realm)
+            .replace("{id}", user_id)
+            .replace("{client-id}", client_id);
+        
+        let client = reqwest::Client::new();
+
+        let path = base_url.to_owned() + &url.to_owned();
+        let k_res = client.post(&path).bearer_auth(bearer)
+            .json(roles)
+            .send().await?.error_for_status()?;
+        k_res.text().await?;
+        Ok(())
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -297,4 +343,33 @@ pub struct UserRepresentation {
     pub self_: Option<String>,
     pub service_account_client_id: Option<String>,
     pub username: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct RoleRepresentationComposites {
+    pub client: Option<HashMap<String, String>>,
+    pub realm: Option<Vec<String>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+#[serde(rename_all="camelCase")]
+pub struct RoleRepresentation {
+    pub attributes: Option<HashMap<String, String>>,
+    pub client_role: Option<bool>,
+    pub composite: Option<bool>,
+    pub composites: Option<RoleRepresentationComposites>,
+    pub container_id: Option<String>,
+    pub description: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+}
+
+impl RoleRepresentation {
+    pub fn new(id: &str, name: &str) -> Self {
+        Self {
+            id: Some(id.to_owned()),
+            name: Some(name.to_owned()),
+            ..Default::default()
+        }
+    }
 }
