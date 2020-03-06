@@ -129,6 +129,54 @@ impl Admin {
         }
     }
 
+    pub async fn get_users(
+        base_url: &str,
+        realm: &str,
+        query: &UserQuery,
+        token: &str,
+    ) -> Result<Vec<UserRepresentation>, reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_users
+            .replace("{realm-name}", realm);
+        
+        let path = base_url.to_owned() + &url.to_owned();
+        let client = reqwest::Client::new();
+        let response = client
+            .get(&path)
+            .bearer_auth(token.to_string())
+            .query(&query)
+            .send()
+            .await?.error_for_status()?;
+        let json = response.json().await?;
+
+        if let Ok(users) = serde_json::from_value(json) {
+            Ok(users)
+        } else {
+            Ok(Vec::new())
+        }
+    }
+
+    pub async fn delete_user(
+        base_url: &str,
+        user_id: &str,
+        realm: &str,
+        token: &str,
+    ) -> Result<(), reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_user
+            .replace("{realm-name}", realm)
+            .replace("{id}", user_id);
+
+        let path = base_url.to_owned() + &url.to_owned();
+        let client = reqwest::Client::new();
+        client
+            .delete(&path)
+            .bearer_auth(token.to_string())
+            .send()
+            .await?.error_for_status()?;
+        Ok(())
+    }
+
     pub async fn users_count(
         base_url: &str,
         realm: &str,
@@ -372,4 +420,17 @@ impl RoleRepresentation {
             ..Default::default()
         }
     }
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+#[serde(rename_all="camelCase")]
+pub struct UserQuery {
+    pub brief_representation: Option<bool>,
+    pub email: Option<String>,
+    pub first: Option<i32>,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub max: Option<i32>,
+    pub search: Option<String>,
+    pub username: Option<String>,
 }
