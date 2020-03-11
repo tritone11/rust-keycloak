@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use reqwest::header::{HeaderValue, CONTENT_TYPE};
 use crate::admin;
 use crate::openid;
 use crate::urls;
@@ -124,6 +125,57 @@ impl Admin {
 
         if let Some(location) = response.headers().get("location").and_then(|location| location.to_str().ok()) {
             Ok(location.rsplitn(2, '/').next().map(|id| id.to_owned()))
+        } else {
+            Ok(None)
+        }
+    }
+
+    pub async fn update_user(
+        base_url: &str,
+        data: &UserRepresentation,
+        realm: &str,
+        token: &str,
+    ) -> Result<(), reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_user
+            .replace("{realm-name}", realm)
+            .replace("{id}", data.id.as_ref().unwrap());
+        let payload =  serde_json::to_value(data).unwrap();
+
+        let path = base_url.to_owned() + &url.to_owned();
+        let client = reqwest::Client::new();
+        client
+            .put(&path)
+            .bearer_auth(token.to_string())
+            .header(CONTENT_TYPE, HeaderValue::from_static("application/json"))
+            .json(&payload)
+            .send()
+            .await?.error_for_status()
+            .map(|_| {})
+    }
+
+    pub async fn get_user(
+        base_url: &str,
+        realm: &str,
+        user_id: &str,
+        token: &str,
+    ) -> Result<Option<UserRepresentation>, reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_user
+            .replace("{realm-name}", realm)
+            .replace("{id}", user_id);
+        
+        let path = base_url.to_owned() + &url.to_owned();
+        let client = reqwest::Client::new();
+        let response = client
+            .get(&path)
+            .bearer_auth(token.to_string())
+            .send()
+            .await?.error_for_status()?;
+        let json = response.json().await?;
+
+        if let Ok(user) = serde_json::from_value(json) {
+            Ok(Some(user))
         } else {
             Ok(None)
         }
