@@ -380,6 +380,34 @@ impl Admin {
         k_res.text().await?;
         Ok(())
     }
+
+    pub async fn send_update_account(
+        base_url: &str,
+        realm: &str,
+        user_id: &str,
+        actions: &[&str],
+        lifespan: i32,
+        client_id: Option<&str>,
+        redirect_uri: Option<&str>,
+        bearer: &str,
+    ) -> Result<(), reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_send_update_account
+            .replace("{realm-name}", realm)
+            .replace("{id}", user_id);
+        
+        let client = reqwest::Client::new();
+        let query = ExecuteActionsEmailQuery {
+            lifespan, client_id, redirect_uri,
+        };
+
+        let path = base_url.to_owned() + &url.to_owned();
+        client.put(&path).bearer_auth(bearer)
+            .query(&query)
+            .json(&actions)
+            .send().await?.error_for_status()?;
+        Ok(())
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -485,4 +513,13 @@ pub struct UserQuery {
     pub max: Option<i32>,
     pub search: Option<String>,
     pub username: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+struct ExecuteActionsEmailQuery<'a> {
+    lifespan: i32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    client_id: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    redirect_uri: Option<&'a str>,
 }
