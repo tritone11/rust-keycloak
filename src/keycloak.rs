@@ -233,7 +233,7 @@ impl Admin {
         base_url: &str,
         realm: &str,
         bearer: &str,
-    ) -> Result<u64, Box<dyn std::error::Error>> {
+    ) -> Result<Option<u64>, reqwest::Error> {
         let url = urls::ADMIN_URLS
             .url_admin_users_count
             .replace("{realm-name}", realm);
@@ -241,11 +241,9 @@ impl Admin {
         let path = base_url.to_owned() + &url.to_owned();
         let res = admin::bearer_get_request(&path, bearer).await?;
         if let serde_json::Value::Number(count) = res.json().await? {
-            count
-                .as_u64()
-                .ok_or_else(|| "Response is not a positive number".into())
+            Ok(count.as_u64())
         } else {
-            Err("Response is not a number".into())
+            Ok(None)
         }
     }
 
