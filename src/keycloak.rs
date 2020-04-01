@@ -549,16 +549,16 @@ struct ExecuteActionsEmailQuery<'a> {
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct UserGroupsQuery<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    first: Option<i32>,
+    pub first: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    max: Option<i32>,
+    pub max: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    search: Option<&'a str>,
+    pub search: Option<&'a str>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct GroupRepresentation {
-    id: String,
-    name: String,
-    path: String,
+    pub id: String,
+    pub name: String,
+    pub path: String,
 }
