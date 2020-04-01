@@ -333,6 +333,30 @@ impl Admin {
         Ok(serde_json::from_value(k_res.json().await?).ok())
     }
 
+    pub async fn user_groups(
+        base_url: &str,
+        realm: &str,
+        id: &str,
+        query: Option<UserGroupsQuery<'_>>,
+        bearer: &str,
+    ) -> Result<Option<Vec<GroupRepresentation>>, reqwest::Error> {
+        let url = urls::ADMIN_URLS
+            .url_admin_user_groups
+            .replace("{realm-name}", realm)
+            .replace("{id}", id);
+        let client = reqwest::Client::new();
+
+        let path = base_url.to_owned() + &url.to_owned();
+        let request = client.get(&path).bearer_auth(bearer);
+        let request = if let Some(query) = query {
+            request.query(&query)
+        } else {
+            request
+        };
+        let k_res = request.send().await?.error_for_status()?;
+        Ok(serde_json::from_value(k_res.json().await?).ok())
+    }
+
     pub async fn add_realm_roles_to_user(
         base_url: &str,
         realm: &str,
@@ -520,4 +544,21 @@ struct ExecuteActionsEmailQuery<'a> {
     client_id: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     redirect_uri: Option<&'a str>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct UserGroupsQuery<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    first: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    max: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    search: Option<&'a str>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct GroupRepresentation {
+    id: String,
+    name: String,
+    path: String,
 }

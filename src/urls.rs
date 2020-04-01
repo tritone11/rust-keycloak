@@ -26,8 +26,8 @@ pub struct AdminUrls {
     url_admin_user_client_roles_composite : &'static str,*/
     pub url_admin_user_realm_roles: &'static str,
     pub url_admin_user_group : &'static str,
-    /*url_admin_user_groups : &'static str,
-    url_admin_user_password : &'static str,
+    pub url_admin_user_groups : &'static str,
+    /*url_admin_user_password : &'static str,
     url_admin_user_storage : &'static str,
 
     url_admin_server_info : &'static str,
@@ -80,8 +80,8 @@ pub const ADMIN_URLS: AdminUrls = AdminUrls {
     url_admin_user_client_roles_composite : "admin/realms/{realm-name}/users/{id}/role-mappings/clients/{client-id}/composite",*/
     url_admin_user_realm_roles: "admin/realms/{realm-name}/users/{id}/role-mappings/realm",
     url_admin_user_group : "admin/realms/{realm-name}/users/{id}/groups/{group-id}",
-    /*url_admin_user_groups : "admin/realms/{realm-name}/users/{id}/groups",
-    url_admin_user_password : "admin/realms/{realm-name}/users/{id}/reset-password",
+    url_admin_user_groups : "admin/realms/{realm-name}/users/{id}/groups",
+    /*url_admin_user_password : "admin/realms/{realm-name}/users/{id}/reset-password",
     url_admin_user_storage : "admin/realms/{realm-name}/user-storage/{id}/sync",
 
     url_admin_server_info : "admin/serverinfo",
