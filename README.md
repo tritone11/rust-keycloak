@@ -16,13 +16,19 @@ rust-keycloak is a Rust crate providing access to the Keycloak API.
 * [x] token
 * [x] refresh_token
 * [x] jwt_decode
+* [x] service_account
 
 ### Admin
 
-* [x] create_user
-* [x] users_count
+* [x] Create user
+* [x] Delete user
+* [x] Update user
+* [x] Count users
 * [x] user_info
 * [x] introspect
+* [x] Add user to grup
+* [x] Remove user from group
+* [x] Add realm and client roles to users
 
 ## Example usage
 
