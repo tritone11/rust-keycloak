@@ -1,0 +1,13 @@
+[package]
+name = "realm"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.28.1", features = ["full"] }
+
+# TODO : replace with proper version upon release
+rust-keycloak = { path= "../../../rust-keycloak" }
+# rust-keycloak = "0.0.8" 

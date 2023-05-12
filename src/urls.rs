@@ -15,18 +15,22 @@ pub struct Urls {
 pub struct AdminUrls {
     pub url_admin_users: &'static str,
     pub url_admin_users_count: &'static str,
-    pub url_admin_user : &'static str,
+    pub url_admin_user: &'static str,
     //url_admin_user_consents : &'static str,
-    pub url_admin_send_update_account : &'static str,
+    pub url_admin_send_update_account: &'static str,
     /*url_admin_send_verify_email : &'static str,
     url_admin_reset_password : &'static str,
     url_admin_get_sessions : &'static str,*/
-    pub url_admin_user_client_roles : &'static str,
+    pub url_admin_user_client_roles: &'static str,
     /*url_admin_user_client_roles_available : &'static str,
     url_admin_user_client_roles_composite : &'static str,*/
     pub url_admin_user_realm_roles: &'static str,
-    pub url_admin_user_group : &'static str,
-    pub url_admin_user_groups : &'static str,
+    pub url_admin_user_group: &'static str,
+    pub url_admin_user_groups: &'static str,
+    pub url_admin_realm_import: &'static str,
+    pub url_admin_realm: &'static str,
+    pub url_admin_clients: &'static str,
+    pub url_admin_identity_provider_instances : &'static str,
     /*url_admin_user_password : &'static str,
     url_admin_user_storage : &'static str,
 
@@ -38,7 +42,6 @@ pub struct AdminUrls {
     url_admin_group_permissions : &'static str,
     url_admin_group_members : &'static str,
 
-    url_admin_clients : &'static str,
     url_admin_client : &'static str,
     url_admin_client_roles : &'static str,
     url_admin_client_role : &'static str,
@@ -47,8 +50,6 @@ pub struct AdminUrls {
     url_admin_client_certs : &'static str,
 
     url_admin_realm_roles : &'static str,
-    url_admin_realm_import : &'static str,
-    url_admin_idps : &'static str,
 
     url_admin_flows : &'static str,
     url_admin_flows_executions : &'static str,*/
@@ -71,16 +72,21 @@ pub const ADMIN_URLS: AdminUrls = AdminUrls {
     url_admin_users_count: "admin/realms/{realm-name}/users/count",
     url_admin_user: "admin/realms/{realm-name}/users/{id}",
     //url_admin_user_consents : "admin/realms/{realm-name}/users/{id}/consents",
-    url_admin_send_update_account : "admin/realms/{realm-name}/users/{id}/execute-actions-email",
+    url_admin_send_update_account: "admin/realms/{realm-name}/users/{id}/execute-actions-email",
     /*url_admin_send_verify_email : "admin/realms/{realm-name}/users/{id}/send-verify-email",
     url_admin_reset_password : "admin/realms/{realm-name}/users/{id}/reset-password",
     url_admin_get_sessions : "admin/realms/{realm-name}/users/{id}/sessions",*/
-    url_admin_user_client_roles : "admin/realms/{realm-name}/users/{id}/role-mappings/clients/{client-id}",
+    url_admin_user_client_roles:
+        "admin/realms/{realm-name}/users/{id}/role-mappings/clients/{client-id}",
     /*url_admin_user_client_roles_available : "admin/realms/{realm-name}/users/{id}/role-mappings/clients/{client-id}/available",
     url_admin_user_client_roles_composite : "admin/realms/{realm-name}/users/{id}/role-mappings/clients/{client-id}/composite",*/
     url_admin_user_realm_roles: "admin/realms/{realm-name}/users/{id}/role-mappings/realm",
-    url_admin_user_group : "admin/realms/{realm-name}/users/{id}/groups/{group-id}",
-    url_admin_user_groups : "admin/realms/{realm-name}/users/{id}/groups",
+    url_admin_user_group: "admin/realms/{realm-name}/users/{id}/groups/{group-id}",
+    url_admin_user_groups: "admin/realms/{realm-name}/users/{id}/groups",
+    url_admin_realm_import: "admin/realms",
+    url_admin_realm: "admin/realms/{realm-name}",
+    url_admin_clients: "admin/realms/{realm-name}/clients",
+    url_admin_identity_provider_instances : "admin/realms/{realm-name}/identity-provider/instances",
     /*url_admin_user_password : "admin/realms/{realm-name}/users/{id}/reset-password",
     url_admin_user_storage : "admin/realms/{realm-name}/user-storage/{id}/sync",
 
@@ -92,7 +98,6 @@ pub const ADMIN_URLS: AdminUrls = AdminUrls {
     url_admin_group_permissions : "admin/realms/{realm-name}/groups/{id}/management/permissions",
     url_admin_group_members : "admin/realms/{realm-name}/groups/{id}/members",
 
-    url_admin_clients : "admin/realms/{realm-name}/clients",
     url_admin_client : "admin/realms/{realm-name}/clients/{id}",
     url_admin_client_roles : "admin/realms/{realm-name}/clients/{id}/roles",
     url_admin_client_role : "admin/realms/{realm-name}/clients/{id}/roles/{role-name}",
@@ -101,8 +106,6 @@ pub const ADMIN_URLS: AdminUrls = AdminUrls {
     url_admin_client_certs : "admin/realms/{realm-name}/clients/{id}/certificates/{attr}",
 
     url_admin_realm_roles : "admin/realms/{realm-name}/roles",
-    url_admin_realm_import : "admin/realms",
-    url_admin_idps : "admin/realms/{realm-name}/identity-provider/instances",
 
     url_admin_flows : "admin/realms/{realm-name}/authentication/flows",
     url_admin_flows_executions : "admin/realms/{realm-name}/authentication/flows/{flow-alias}/executions",
