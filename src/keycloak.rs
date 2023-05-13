@@ -403,6 +403,97 @@ impl Admin {
         Ok(())
     }
 
+    pub async fn delete_realm(
+        base_url: &str,
+        realm: &str,
+        bearer: &str,
+    ) -> Result<(), reqwest::Error> {
+        let url = urls::ADMIN_URLS.url_admin_realm
+            .replace("{realm-name}", realm);
+
+
+        let client = reqwest::Client::new();
+        let path = base_url.to_owned() + &url.to_owned();
+
+        let response = client.delete(&path).bearer_auth(bearer)
+            .send().await?.error_for_status()?;
+
+        response.text().await?;
+        Ok(())
+    }
+
+    pub async fn create_realm(
+        base_url: &str,
+        realm: &RealmRepresentation,
+        bearer: &str,
+    ) -> Result<Option<String>, reqwest::Error> {
+        let url = urls::ADMIN_URLS.url_admin_realm_import;
+
+        let client = reqwest::Client::new();
+        let path = base_url.to_owned() + &url.to_owned();
+
+        let response = client.post(&path)
+            .bearer_auth(bearer)
+            .json(realm)
+            .send().await?.error_for_status()?;
+
+        if let Some(location) = response.headers().get("location").and_then(|location| location.to_str().ok()) {
+            Ok(location.rsplitn(2, '/').next().map(|id| id.to_owned()))
+        } else {
+            Ok(None)
+        }
+    }
+
+    pub async fn create_client(
+        base_url: &str,
+        realm: &str,
+        client_representation: &ClientRepresentation,
+        bearer: &str,
+    ) -> Result<Option<String>, reqwest::Error> {
+        let url = urls::ADMIN_URLS.url_admin_clients
+            .replace("{realm-name}", realm);
+
+        let client = reqwest::Client::new();
+        let path = base_url.to_owned() + &url.to_owned();
+
+        let response = client.post(&path)
+            .bearer_auth(bearer)
+            .json(client_representation)
+            .send().await?.error_for_status()?;
+
+        if let Some(location) = response.headers().get("location").and_then(|location| location.to_str().ok()) {
+            Ok(location.rsplitn(2, '/').next().map(|id| id.to_owned()))
+        } else {
+            Ok(None)
+        }
+    }
+
+    pub async fn create_identity_provider(
+        base_url: &str,
+        realm: &str,
+        identity_provider_representation: &IdentityProviderRepresentation,
+        bearer: &str,
+    ) -> Result<Option<String>, reqwest::Error> {
+        let url = urls::ADMIN_URLS.url_admin_identity_provider_instances
+            .replace("{realm-name}", realm);
+
+        let client = reqwest::Client::new();
+        let path = base_url.to_owned() + &url.to_owned();
+
+        let response = client.post(&path)
+            .bearer_auth(bearer)
+            .json(identity_provider_representation)
+            .send().await?.error_for_status()?;
+
+        if let Some(location) = response.headers().get("location").and_then(|location| location.to_str().ok()) {
+            Ok(location.rsplitn(2, '/').next().map(|id| id.to_owned()))
+        } else {
+            Ok(None)
+        }
+    }
+
+
+
     pub async fn send_update_account(
         base_url: &str,
         realm: &str,
@@ -430,6 +521,7 @@ impl Admin {
             .send().await?.error_for_status()?;
         Ok(())
     }
+
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -522,6 +614,43 @@ impl RoleRepresentation {
             ..Default::default()
         }
     }
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+#[serde(rename_all="camelCase")]
+pub struct ProviderConfigRepresentation {
+    pub use_jwks_url: Option<bool>,
+    pub client_id: Option<String>,
+    pub client_secret: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+#[serde(rename_all="camelCase")]
+pub struct IdentityProviderRepresentation {
+    pub enabled: Option<bool>,
+    pub alias: Option<String>,
+    pub provider_id: Option<String>,
+    pub config: Option<ProviderConfigRepresentation>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+#[serde(rename_all="camelCase")]
+pub struct ClientRepresentation {
+    pub client_id: Option<String>,
+    pub public_client: Option<bool>,
+    pub redirect_uris: Option<Vec<String>>,
+    pub web_origins: Option<Vec<String>>,
+    pub direct_access_grants_enabled: Option<bool>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+#[serde(rename_all="camelCase")]
+pub struct RealmRepresentation {
+    pub realm: Option<String>,
+    pub enabled: Option<bool>,
+    pub registration_allowed: Option<bool>,
+    pub registration_email_as_username: Option<bool>,
+    pub login_theme: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
